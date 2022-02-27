@@ -12,7 +12,7 @@ public class SudokuSolver {
                 temp.show();
                 System.out.println();
             }
-        }
+        }//
         else { //jeśli number < halfTable.length, należy dalej wykonywać rekurencję dalej...
             if (originTable[number] != 0)
                 sudokuTablesSolverBruteForce(originTable, halfTable, number+1);
