@@ -57,7 +57,7 @@ public class SudokuSolver {
                     SudokuTable temp = new SudokuTable(halfTable); //inicjalizacja zmiennej SudokuTable temp musi się odbyć tutaj, bo jeśli będzie "wyżej", to nie wykonują się
                     //wszystkie możliwe rozwiązania (tak jakby zmienna zapamiętywała poprzednie parametry czy coś:-p)
 //                    System.out.println("Number: " + number + ", row: " + ((number/9)+1) + ", column: " + ((number%9)+1) + ", i: " + i);
-                    if (temp.notAllowedNumber(((number/9)+1), ((number%9)+1)).contains(i)) {
+                    if (temp.notAllowedNumber((number/9), (number%9)).contains(i)) {
 //                        System.out.println("contains, Continue...");
 //                        temp.show();
                     }
