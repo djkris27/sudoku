@@ -1,9 +1,9 @@
 import java.util.*;
 
 public class SudokuTable {
-	private static int [][] table = new int [9][9];
+	private int [][] table = new int [9][9];
 
-	//constructor create table filled 0
+	//constructor create table filled "0"
 	public SudokuTable(){
 		for (int i = 0; i< table.length; i++)
 			for (int j = 0; j<table[i].length; j++)
