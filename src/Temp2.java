@@ -5,7 +5,7 @@ public class Temp2 {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MyFrame("Sudoku by djkris V1");
+                new SudokuFrame("Sudoku by djkris V1");
             }
         });
     }
