@@ -1,7 +1,21 @@
 import java.util.*;
 
 public class SudokuSolver {
+    private int [] originSudokuTable;
     private LinkedList<SudokuTable> solvedSudoku = new LinkedList<SudokuTable>();
+
+
+    public SudokuSolver(int [] originSudokuTable){
+        this.originSudokuTable = originSudokuTable;
+    }
+
+    public int [] getOriginSudokuTable(){
+        return originSudokuTable;
+    }
+
+    private void resolveSudokuTable() {
+        sudokuTableSolverV1(originSudokuTable, originSudokuTable, 0);
+    }
 
     //This method resolve sudoku by generate all possibilities - all that is mean all by input numbers 1-9 to all zeros fields.
     //ofiginTable - table, which have got fields witch numbers 1-9 (non changeable) and numbers 0 (to resolve)
@@ -74,7 +88,7 @@ public class SudokuSolver {
         }
     }
 
-
+/*
 
 
     public static void main(String[] args) {
@@ -152,17 +166,21 @@ public class SudokuSolver {
         };
 
 
-//        SudokuTable s = new SudokuTable(testTable1Mod);
-        SudokuTable s = new SudokuTable(testTable1);
-        s.show();
+//        SudokuTable s = new SudokuTable(testTable1);
+//        s.show();
+
+        SudokuSolver ss = new SudokuSolver(testTable1);
+        new SudokuTable(ss.getOriginSudokuTable()).show();
         System.out.println();
-        SudokuSolver ss = new SudokuSolver();
-        ss.sudokuTableSolverV1(s.returnTable(), s.returnTable(), 0);
+//        ss.sudokuTableSolverV1(ss.getOriginSudokuTable(), ss.getOriginSudokuTable(), 0);
+        ss.resolveSudokuTable();
 
         System.out.println("Quantity of this sudoku solutions: " + ss.quantityofSolution());
         if (ss.quantityofSolution() > 0)
             ss.showAllSolutions();
 
     }
+
+*/
 
 }
