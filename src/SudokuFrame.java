@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,6 @@ public class SudokuFrame extends JFrame {
         try {
             File inputFile = new File("testTable.txt");
             Scanner myReader = new Scanner(inputFile);
-
             for (int i = 0; i < originSudokuTable.length; i++)
                 originSudokuTable[i] = myReader.nextInt();
             myReader.close();
@@ -52,13 +52,13 @@ public class SudokuFrame extends JFrame {
             System.out.println("An error occurred. File not found.");
             e.printStackTrace();
         }
+
+        //Append originalTable JText Area
         for (int i = 0; i < originSudokuTable.length; i++){
             originSudoku.append(originSudokuTable[i] + " ");
             if ((i+1)%9 == 0)
                 originSudoku.append("\n");
         }
-
-
         originSudoku.setFont(new Font("Arial", Font.BOLD, 20));
         originSudoku.setForeground(Color.BLUE);
 
@@ -66,15 +66,59 @@ public class SudokuFrame extends JFrame {
         resolvedSudoku.setFont(new Font("Arial", Font.BOLD, 20));
         resolvedSudoku.setForeground(Color.BLUE);
         resolvedSudoku.setEditable(false);
-        JButton resolve = new JButton("Rozwiąż sudoku");
 
+        JLabel numberOfSolution = new JLabel("Rozwiązanie: ");
+        add(numberOfSolution);
+
+        JButton resolve = new JButton("Rozwiąż sudoku");
         resolve.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("ActionListener test");
-                resolvedSudoku.setText("BRAK \nROZWIĄZANIA");
+                SudokuSolver ss = new SudokuSolver(originSudokuTable);
+                boolean goodSudokuNumbers = true;
+                Scanner myReader = new Scanner(originSudoku.getText());
+                for (int i = 0; i < originSudokuTable.length; i++) {
+                    try {
+                        originSudokuTable[i] = myReader.nextInt();
+                        if ((originSudokuTable[i] < 0) || (originSudokuTable[i] > 9))
+                            goodSudokuNumbers = false;
+                    } catch (Exception e){
+                        resolvedSudoku.setText("Błędnie \nwprowadzone \nliczby.");
+                        goodSudokuNumbers = false;
+                    }
+                }
+                myReader.close();
+
+                //temporary showing origininSudokuTable in standard sout - after test delete this section
+                for (int i : originSudokuTable)
+                    System.out.print(i + " ");
+                System.out.println();
+
+                if (goodSudokuNumbers){
+                    ss.resolveSudokuTable();
+
+                    numberOfSolution.setText("Rozwiązanie: " + 1 + "/" + ss.quantityofSolution()); //you must change numeration of resolved Sudoku
+
+                    if (ss.quantityofSolution() >0 ){
+                        resolvedSudoku.setText("");
+                        int [] tempTable = ss.getAllSolutioins().get(0).returnTable();
+                        for (int i = 0; i < tempTable.length; i++) {
+                            resolvedSudoku.append(tempTable[i] + " ");
+                            if ((i+1)%9 == 0)
+                                resolvedSudoku.append("\n");
+                        }
+                    }
+                    else
+                        resolvedSudoku.setText("BRAK \nROZWIĄZANIA");
+                }
+                else
+                    resolvedSudoku.setText("Błędnie \nwprowadzone \nliczby.");
+
+
             }
         });
+
+
 
 
         add(originSudoku);

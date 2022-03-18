@@ -13,7 +13,7 @@ public class SudokuSolver {
         return originSudokuTable;
     }
 
-    private void resolveSudokuTable() {
+    public void resolveSudokuTable() {
         sudokuTableSolverV1(originSudokuTable, originSudokuTable, 0);
     }
 
@@ -21,7 +21,7 @@ public class SudokuSolver {
     //ofiginTable - table, which have got fields witch numbers 1-9 (non changeable) and numbers 0 (to resolve)
     //halfTable - temp table containt testing values, added for recurension
     //number - number of actually testing element in 1-dimension table.
-    public void sudokuTablesSolverBruteForce(int [] originTable, int [] halfTable, int number){
+    private void sudokuTablesSolverBruteForce(int [] originTable, int [] halfTable, int number){
         if (number >= halfTable.length){
             //if number if equals (or eventually greater than) as halfTable length, than we can create SudokuTable object
             //to check, if this sudoku is normal (checkTable() method)
@@ -53,7 +53,7 @@ public class SudokuSolver {
     //ofiginTable - table, which have got fields witch numbers 1-9 (non changeable) and numbers 0 (to resolve)
     //halfTable - temp table containt testing values, added for recurension
     //number - number of actually testing element in 1-dimension table.
-    public void sudokuTableSolverV1(int [] originTable, int [] halfTable, int number){
+    private void sudokuTableSolverV1(int [] originTable, int [] halfTable, int number){
         SudokuTable tempTest = new SudokuTable(halfTable);
         if (number >= halfTable.length){
             //if number if equals (or eventually greater than) as halfTable length, than we can create SudokuTable object
@@ -86,6 +86,10 @@ public class SudokuSolver {
             s.show();
             System.out.println();
         }
+    }
+
+    public LinkedList<SudokuTable> getAllSolutioins(){
+        return new LinkedList<SudokuTable>(solvedSudoku);
     }
 
 /*
@@ -150,7 +154,7 @@ public class SudokuSolver {
                 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0
         };
 
         int [] testTable1Mod = {
