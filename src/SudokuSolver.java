@@ -77,7 +77,7 @@ public class SudokuSolver {
         }
     }
 
-    public int quantityofSolution(){
+    public int quantityOfSolution(){
         return solvedSudoku.size();
     }
 
