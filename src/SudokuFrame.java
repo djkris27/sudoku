@@ -29,18 +29,32 @@ public class SudokuFrame extends JFrame {
         setLocation(50,50);
         setLayout(new FlowLayout());
 
+        int [] originSudokuTable = new int[81];
 
         JMenuBar menuBar = new JMenuBar();
-        JMenu file = new JMenu("File");
-        JMenuItem openFile = new JMenuItem("Open File");
+        JMenu file = new JMenu("Plik");
+        JMenuItem openFile = new JMenuItem("Otwórz plik");
+        JMenuItem clear = new JMenuItem("Wyczyść");
+        JMenu edit = new JMenu("Edycja");
+        JMenuItem copy = new JMenuItem("Kopiuj");
+        JMenuItem paste = new JMenuItem("Wklej");
+        JMenuItem cut = new JMenuItem("Wytnij");
+
+
+
+
         menuBar.add(file);
         file.add(openFile);
+        file.add(clear);
+        menuBar.add(edit);
+        edit.add(copy);
+        edit.add(paste);
+        edit.add(cut);
         add(menuBar);
 
 
-
         JTextArea originSudoku = new JTextArea();
-        int [] originSudokuTable = new int[81];
+
         //read file to originSudoku
         try {
             File inputFile = new File("testTable.txt");
@@ -54,6 +68,7 @@ public class SudokuFrame extends JFrame {
         }
 
         //Append originalTable JText Area
+        originSudoku.setText("");
         for (int i = 0; i < originSudokuTable.length; i++){
             originSudoku.append(originSudokuTable[i] + " ");
             if ((i+1)%9 == 0)
@@ -116,6 +131,78 @@ public class SudokuFrame extends JFrame {
 
 
             }
+        });
+
+
+        openFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fc =new JFileChooser();
+                fc.showOpenDialog(null);
+                File inputTempFile = fc.getSelectedFile();
+
+                try {
+                    Scanner myReader = new Scanner(inputTempFile);
+                    for (int i = 0; i < originSudokuTable.length; i++)
+                        originSudokuTable[i] = myReader.nextInt();
+                    myReader.close();
+                } catch (FileNotFoundException e) {
+                    System.out.println("An error occurred. File not found.");
+                    e.printStackTrace();
+                }
+
+                //Append originalTable JText Area
+                originSudoku.setText("");
+                for (int i = 0; i < originSudokuTable.length; i++){
+                    originSudoku.append(originSudokuTable[i] + " ");
+                    if ((i+1)%9 == 0)
+                        originSudoku.append("\n");
+                }
+
+                //GO HERE!!! DO THIS!!!
+ /*
+                SudokuSolver ss = new SudokuSolver(originSudokuTable);
+                boolean goodSudokuNumbers = true;
+                Scanner myReader = new Scanner(originSudoku.getText());
+                for (int i = 0; i < originSudokuTable.length; i++) {
+                    try {
+                        originSudokuTable[i] = myReader.nextInt();
+                        if ((originSudokuTable[i] < 0) || (originSudokuTable[i] > 9))
+                            goodSudokuNumbers = false;
+                    } catch (Exception e){
+                        resolvedSudoku.setText("Błędnie \nwprowadzone \nliczby.");
+                        goodSudokuNumbers = false;
+                    }
+                }
+                myReader.close();
+
+                //temporary showing origininSudokuTable in standard sout - after test delete this section
+                for (int i : originSudokuTable)
+                    System.out.print(i + " ");
+                System.out.println();
+
+                if (goodSudokuNumbers){
+                    ss.resolveSudokuTable();
+
+                    numberOfSolution.setText("Rozwiązanie: " + 1 + "/" + ss.quantityofSolution()); //you must change numeration of resolved Sudoku
+
+                    if (ss.quantityofSolution() >0 ){
+                        resolvedSudoku.setText("");
+                        int [] tempTable = ss.getAllSolutioins().get(0).returnTable();
+                        for (int i = 0; i < tempTable.length; i++) {
+                            resolvedSudoku.append(tempTable[i] + " ");
+                            if ((i+1)%9 == 0)
+                                resolvedSudoku.append("\n");
+                        }
+                    }
+                    else
+                        resolvedSudoku.setText("BRAK \nROZWIĄZANIA");
+                }
+                else
+                    resolvedSudoku.setText("Błędnie \nwprowadzone \nliczby.");
+
+*/          }
+
         });
 
 
