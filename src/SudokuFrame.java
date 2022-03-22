@@ -1,18 +1,15 @@
 /*
 Elementy, które należy umieścić:
-- obszar tekstowy do wpisywania sudoku
-- obszar tekstowy do wpisywania rozwiązanego sudoku
-- przycisk do wywołania rozwiązywania sudoku
-- przyciski przewijania rozwiązań (w przypadku więcej niż jednego rozwiązania
-- obszar tekstowy pokazujący ilość rozwiązań oraz aktualnie wyświetlane rozwiązanie (np. 1/3)
-- element obrazujący aktualną pracę (w przypadku długotrwałego rozwiązywania sudoku) oraz zakończenie rozwiązywania sudoku
+- element obrazujący aktualny postęp pracy (w przypadku długotrwałego rozwiązywania sudoku) oraz zakończenie rozwiązywania sudoku
 */
 
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -20,7 +17,7 @@ import java.util.Scanner;
 public class SudokuFrame extends JFrame {
     private int [] originSudokuTable = new int[81];
     private SudokuSolver ss = null;
-    private int CurrentSolutionNumber = 0;
+    private int currentSolutionNumber = 0;
 
 
     private boolean readOriginSudokuTableFromFile(File inputFile){
@@ -41,7 +38,7 @@ public class SudokuFrame extends JFrame {
         jTextArea.setText("");
         for (int i = 0; i < table.length; i++) {
             jTextArea.append(table[i] + " ");
-            if ((i+1)%9 == 0)
+            if (((i+1)%9 == 0) && ((i+1)%81 != 0))
                 jTextArea.append("\n");
         }
     }
@@ -64,9 +61,15 @@ public class SudokuFrame extends JFrame {
         JMenuItem openFile = new JMenuItem("Otwórz plik");
         JMenuItem clear = new JMenuItem("Wyczyść");
         JMenu edit = new JMenu("Edycja");
-        JMenuItem copy = new JMenuItem("Kopiuj");
-        JMenuItem paste = new JMenuItem("Wklej");
-        JMenuItem cut = new JMenuItem("Wytnij");
+        JMenuItem copy = new JMenuItem(new DefaultEditorKit.CopyAction());
+            copy.setText("Kopiuj");
+            copy.setMnemonic(KeyEvent.VK_C);
+        JMenuItem paste = new JMenuItem(new DefaultEditorKit.PasteAction());
+            paste.setText("Wklej");
+            paste.setMnemonic(KeyEvent.VK_V);
+        JMenuItem cut = new JMenuItem(new DefaultEditorKit.CutAction());
+            cut.setText("Wytnij");
+            cut.setMnemonic(KeyEvent.VK_X);
 
 
 
@@ -74,7 +77,7 @@ public class SudokuFrame extends JFrame {
 
 
 
-        JTextArea originSudoku = new JTextArea();
+        JTextArea originSudoku = new JTextArea(9, 9);
 
         //read file to originSudoku
         if (readOriginSudokuTableFromFile(new File("testTable.txt"))){
@@ -125,13 +128,12 @@ public class SudokuFrame extends JFrame {
 
                 if (goodSudokuNumbers){
                     ss.resolveSudokuTable();
+                    currentSolutionNumber = 1;
 
-                    quantityOfSolution.setText("Rozwiązanie: " + (CurrentSolutionNumber + 1) + "/" + ss.quantityOfSolution()); //you must change numeration of resolved Sudoku
-                    System.out.println();
-                    System.out.println(ss.quantityOfSolution());
+                    quantityOfSolution.setText("Rozwiązanie: " + currentSolutionNumber + "/" + ss.quantityOfSolution());
 
                     if (ss.quantityOfSolution() >0 ){
-                        fillJTextAreaIntTable(resolvedSudoku, ss.getAllSolutioins().get(CurrentSolutionNumber).returnTable());
+                        fillJTextAreaIntTable(resolvedSudoku, ss.getAllSolutioins().get(currentSolutionNumber-1).returnTable());
                     }
                     else
                         resolvedSudoku.setText("BRAK \nROZWIĄZANIA");
@@ -140,7 +142,6 @@ public class SudokuFrame extends JFrame {
                     resolvedSudoku.setText("Błędnie \nwprowadzone \nliczby.");
             }
         });
-
 
         openFile.addActionListener(new ActionListener() {
             @Override
@@ -155,21 +156,44 @@ public class SudokuFrame extends JFrame {
                 else {
                     originSudoku.setText("Problem \nwitch \nfile");
                 }
+                ss = new SudokuSolver(originSudokuTable);
                 resolvedSudoku.setText("");
+            }
+        });
+
+        clear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                for (int i = 0; i < originSudokuTable.length; i++)
+                    originSudokuTable[i] = 0;
+                fillJTextAreaIntTable(originSudoku, originSudokuTable);
+                ss = new SudokuSolver(originSudokuTable);
+                resolvedSudoku.setText("");
+                quantityOfSolution.setText("Rozwiązanie: ");
             }
         });
 
         previous.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                if (ss.quantityOfSolution() > 0) {
+                    if (currentSolutionNumber > 1)
+                        currentSolutionNumber--;
+                    fillJTextAreaIntTable(resolvedSudoku, ss.getAllSolutioins().get(currentSolutionNumber-1).returnTable());
+                    quantityOfSolution.setText("Rozwiązanie: " + currentSolutionNumber + "/" + ss.quantityOfSolution());
+                }
             }
         });
 
         next.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                if (ss.quantityOfSolution() > 0) {
+                    if (currentSolutionNumber < ss.quantityOfSolution())
+                        currentSolutionNumber++;
+                    fillJTextAreaIntTable(resolvedSudoku, ss.getAllSolutioins().get(currentSolutionNumber-1).returnTable());
+                    quantityOfSolution.setText("Rozwiązanie: " + currentSolutionNumber + "/" + ss.quantityOfSolution());
+                }
             }
         });
 
