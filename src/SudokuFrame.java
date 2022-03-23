@@ -7,11 +7,8 @@ Elementy, które należy umieścić:
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.awt.event.*;
+import java.io.*;
 import java.util.Scanner;
 
 public class SudokuFrame extends JFrame {
@@ -55,38 +52,24 @@ public class SudokuFrame extends JFrame {
         setLayout(new FlowLayout());
 
 
-
         JMenuBar menuBar = new JMenuBar();
-        JMenu file = new JMenu("Plik");
-        JMenuItem openFile = new JMenuItem("Otwórz plik");
-        JMenuItem clear = new JMenuItem("Wyczyść");
+            JMenu file = new JMenu("Plik");
+                JMenuItem openFile = new JMenuItem("Otwórz plik");
+                JMenuItem clear = new JMenuItem("Wyczyść");
         JMenu edit = new JMenu("Edycja");
-        JMenuItem copy = new JMenuItem(new DefaultEditorKit.CopyAction());
-            copy.setText("Kopiuj");
-            copy.setMnemonic(KeyEvent.VK_C);
-        JMenuItem paste = new JMenuItem(new DefaultEditorKit.PasteAction());
-            paste.setText("Wklej");
-            paste.setMnemonic(KeyEvent.VK_V);
-        JMenuItem cut = new JMenuItem(new DefaultEditorKit.CutAction());
-            cut.setText("Wytnij");
-            cut.setMnemonic(KeyEvent.VK_X);
-
-
-
-
-
+            JMenuItem copy = new JMenuItem(new DefaultEditorKit.CopyAction());
+                copy.setText("Kopiuj");
+                copy.setMnemonic(KeyEvent.VK_C);
+            JMenuItem paste = new JMenuItem(new DefaultEditorKit.PasteAction());
+                paste.setText("Wklej");
+                paste.setMnemonic(KeyEvent.VK_V);
+            JMenuItem cut = new JMenuItem(new DefaultEditorKit.CutAction());
+                cut.setText("Wytnij");
+                cut.setMnemonic(KeyEvent.VK_X);
 
 
         JTextArea originSudoku = new JTextArea(9, 9);
-
-        //read file to originSudoku
-        if (readOriginSudokuTableFromFile(new File("testTable.txt"))){
-            fillJTextAreaIntTable(originSudoku, originSudokuTable);
-        }
-        else {
-            originSudoku.setText("Błąd \nwczytywania \npliku.");
-        }
-
+        fillJTextAreaIntTable(originSudoku, originSudokuTable);
         originSudoku.setFont(new Font("Arial", Font.BOLD, 20));
         originSudoku.setForeground(Color.BLUE);
 
@@ -105,7 +88,6 @@ public class SudokuFrame extends JFrame {
         resolve.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ss = new SudokuSolver(originSudokuTable);
                 boolean goodSudokuNumbers = true;
                 Scanner myReader = new Scanner(originSudoku.getText());
                 for (int i = 0; i < originSudokuTable.length; i++) {
@@ -119,6 +101,7 @@ public class SudokuFrame extends JFrame {
                     }
                 }
                 myReader.close();
+                ss = new SudokuSolver(originSudokuTable);
 
                 //temporary showing origininSudokuTable in standard sout - after test delete this section
                 for (int i : originSudokuTable)
@@ -128,18 +111,23 @@ public class SudokuFrame extends JFrame {
 
                 if (goodSudokuNumbers){
                     ss.resolveSudokuTable();
-                    currentSolutionNumber = 1;
-
-                    quantityOfSolution.setText("Rozwiązanie: " + currentSolutionNumber + "/" + ss.quantityOfSolution());
 
                     if (ss.quantityOfSolution() >0 ){
+                        currentSolutionNumber = 1;
                         fillJTextAreaIntTable(resolvedSudoku, ss.getAllSolutioins().get(currentSolutionNumber-1).returnTable());
+                        quantityOfSolution.setText("Rozwiązanie: " + currentSolutionNumber + "/" + ss.quantityOfSolution());
                     }
-                    else
+                    else {
+                        currentSolutionNumber = 0;
                         resolvedSudoku.setText("BRAK \nROZWIĄZANIA");
+                        quantityOfSolution.setText("Rozwiązanie: " + currentSolutionNumber + "/" + ss.quantityOfSolution());
+                    }
                 }
-                else
+                else {
+                    currentSolutionNumber = 0;
                     resolvedSudoku.setText("Błędnie \nwprowadzone \nliczby.");
+                    quantityOfSolution.setText("Rozwiązanie: " + currentSolutionNumber + "/" + ss.quantityOfSolution());
+                }
             }
         });
 
